@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reservar Sala de Reunião</title>
+
+  <!-- Google Font Poppins (usado no etipi.com.br) -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* ===== Reset Básico ===== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      height: 100%;
+    }
+
+    /* ===== Variáveis de cor ===== */
+    :root {
+      --cor-primaria: #00539A;
+      --cor-primaria-hover: #003F73;
+      --cor-whatsapp: #25D366;
+      --cor-whatsapp-hover: #1EBE5D;
+      --texto-claro: #FFFFFF;
+      --texto-escuro: #0D1B2A;
+      --texto-secundario: #4F5D75;
+      --fundo-claro: #F0F3F8;
+      --container-bg: #FFFFFF;
+      --sombra-suave: rgba(0, 0, 0, 0.08);
+      --border-radius: 12px;
+      --altura-fixa: 40px;
+      --font-base: 'Poppins', Arial, sans-serif;
+      --header-bg: #102B44;    /* Azul escuro aproximado */
+      --footer-bg: #102B44;    /* Mesmo tom para o footer */
+      --footer-height: 80px;   /* Altura aproximada do footer */
+    }
+
+    body {
+      font-family: var(--font-base);
+      background-color: var(--fundo-claro);
+      color: var(--texto-escuro);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ===================== HEADER ===================== */
+    header {
+    background-color: var(--header-bg);
+    color: #fff;
+
+    padding: 40px 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    }
+
+    header img {
+    max-height: 64px;
+    height: auto;
+    width: auto;
+    }
+
+    @media (max-width: 600px) {
+    header {
+        padding: 24px 16px;
+    }
+    header img {
+        max-height: 40px;
+    }
+    }
+
+    /* =================== CONTEÚDO =================== */
+    .main-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      width: 100%;
+      background-color: var(--container-bg);
+      border-radius: var(--border-radius);
+      box-shadow: 0 8px 24px var(--sombra-suave);
+      padding: 40px 30px;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 2.25rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 16px;
+      color: var(--texto-escuro);
+    }
+
+    .descricao {
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 32px;
+      text-align: center;
+      color: var(--texto-secundario);
+      padding: 0 10px;
+    }
+
+    .calendar-wrapper {
+      position: relative;
+      width: 100%;
+      height: 0;
+      padding-bottom: 56.25%; /* 16:9 */
+      margin-bottom: 32px;
+      overflow: hidden;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px var(--sombra-suave);
+      border: 1px solid #E0E0E0;
+      background-color: #FFFFFF;
+    }
+    .calendar-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .btn-container {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: var(--altura-fixa);
+      padding: 0 16px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+      border: none;
+    }
+
+    .btn--primary {
+      background-color: var(--cor-primaria);
+      color: var(--texto-claro);
+      border: 1px solid var(--cor-primaria);
+    }
+    .btn--primary:hover {
+      background-color: var(--cor-primaria-hover);
+      border-color: var(--cor-primaria-hover);
+    }
+    .btn--primary:disabled {
+      background-color: #A0B5D8;
+      border-color: #A0B5D8;
+      cursor: not-allowed;
+      color: #F0F3F8;
+    }
+
+    .btn--whatsapp {
+      background-color: var(--cor-whatsapp);
+      color: var(--texto-claro);
+      border: 1px solid var(--cor-whatsapp);
+    }
+    .btn--whatsapp:hover {
+      background-color: var(--cor-whatsapp-hover);
+      border-color: var(--cor-whatsapp-hover);
+    }
+    .btn--whatsapp:disabled {
+      background-color: #A8D8B9;
+      border-color: #A8D8B9;
+      cursor: not-allowed;
+      color: #F0F3F8;
+    }
+
+    /* ===== Ícone Flutuante do WhatsApp ===== */
+    .whatsapp-float {
+      position: fixed;
+      /* Sobe acima do footer calculando a altura do footer + margem */
+      bottom: calc(var(--footer-height) + 24px);
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      background-color: var(--cor-whatsapp);
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      z-index: 1000;
+      transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .whatsapp-float:hover {
+      background-color: var(--cor-whatsapp-hover);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    }
+    .whatsapp-float svg {
+      width: 28px;
+      height: 28px;
+      fill: #FFFFFF;
+    }
+
+    /* ===================== FOOTER ===================== */
+    footer {
+    background-color: var(--footer-bg);
+    color: #fff;
+
+    /* Removida a altura fixa */
+    /* height: var(--footer-height); */
+
+    /* Aumentado o padding vertical para cobrir a base da tela */
+    padding: 40px 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    }
+
+    .footer-content {
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    }
+
+    .footer-logo {
+    max-height: 64px;
+    width: auto;
+    }
+    .footer-text {
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 500;
+    flex: 1;
+    }
+    .footer-logo-gov {
+    max-height: 64px;
+    width: auto;
+    }
+
+    /* ===== Responsividade do footer (empilhar vertical em telas pequenas) ===== */
+    @media (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 12px; /* espaçamento entre itens empilhados */
+    }
+    .footer-logo,
+    .footer-logo-gov {
+        margin-bottom: 8px;
+    }
+    }
+
+    /* ===== Responsividade do footer (empilhar vertical em telas pequenas) ===== */
+    @media (max-width: 768px) {
+      .footer-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 12px;  /* espaçamento entre itens */
+      }
+      .footer-logo,
+      .footer-logo-gov {
+        margin-bottom: 8px;
+      }
+    }
+
+    /* ================= Responsividade Geral ================= */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.75rem;
+      }
+      .descricao {
+        font-size: 0.95rem;
+        margin-bottom: 24px;
+      }
+      .btn {
+        font-size: 0.95rem;
+        padding: 0 12px;
+      }
+      .whatsapp-float {
+        width: 48px;
+        height: 48px;
+        bottom: calc(var(--footer-height) + 16px);
+        right: 16px;
+      }
+      .whatsapp-float svg {
+        width: 24px;
+        height: 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- HEADER -->
+  <header>
+    <!-- Substitua o src pelo caminho real do logo da ETIPI em versão branca -->
+    <img src="https://www.etipi.com.br/wp-content/uploads/2024/04/etipi-4.png" alt="Logo ETIPI" />
+  </header>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="main-content">
+    <div class="container">
+      <!-- Título -->
+      <h1>Reservar Sala de Reunião</h1>
+
+      <!-- Texto explicativo -->
+      <p class="descricao">
+        Verifique no calendário a disponibilidade de horários e datas.<br />
+        Em seguida, preencha o formulário corretamente e confirme se sua reserva
+        apareceu no calendário.<br />
+        Em caso de cancelamento, procure Nayra para cancelar sua reserva.
+      </p>
+
+      <!-- Botões dentro do container (opcional) -->
+      <div class="btn-container">
+        <!-- Botão Primário: “Faça sua reserva” -->
+        <button
+          class="btn btn--primary"
+          onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScaJbJV3DtqZoyk2HTN2Rtd9-1eOEL8XmJZhfXCg4OIwJYt6w/viewform?usp=dialog', '_blank')"
+        >
+          Faça sua reserva
+        </button>
+      </div>
+
+      <!-- Calendário Embutido -->
+      <div class="calendar-wrapper">
+        <iframe
+          src="https://calendar.google.com/calendar/embed?src=d174d324ed8ad04b2ede831ead7fc6c9b0b65155809b6e4950b7ea613b8e49bf%40group.calendar.google.com&amp;ctz=America/Sao_Paulo"
+          frameborder="0"
+          scrolling="no"
+        ></iframe>
+      </div>
+    </div>
+  </main>
+
+  <!-- Ícone Flutuante do WhatsApp (acima do footer) -->
+  <a
+    href="https://api.whatsapp.com/send?phone=5586995232071&text=Bom%20dia%2C%20gostaria%20de%20falar%20sobre%20a%20minha%20reserva%20na%20sala%20de%20reuni%C3%A3o."
+    class="whatsapp-float"
+    target="_blank"
+    rel="noopener"
+    aria-label="Entrar em contato pelo WhatsApp"
+  >
+    <!-- SVG personalizado do botão -->
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      x="0px"
+      y="0px"
+      width="100"
+      height="100"
+      viewBox="0 0 48 48"
+    >
+      <path
+        fill="#fff"
+        d="M4.868,43.303l2.694-9.835C5.9,30.59,5.026,27.324,5.027,23.979C5.032,13.514,13.548,5,24.014,5c5.079,0.002,9.845,1.979,13.43,5.566c3.584,3.588,5.558,8.356,5.556,13.428c-0.004,10.465-8.522,18.98-18.986,18.98c-0.001,0,0,0,0,0h-0.008c-3.177-0.001-6.3-0.798-9.073-2.311L4.868,43.303z"
+      ></path>
+      <path
+        fill="#fff"
+        d="M4.868,43.803c-0.132,0-0.26-0.052-0.355-0.148c-0.125-0.127-0.174-0.312-0.127-0.483l2.639-9.636c-1.636-2.906-2.499-6.206-2.497-9.556C4.532,13.238,13.273,4.5,24.014,4.5c5.21,0.002,10.105,2.031,13.784,5.713c3.679,3.683,5.704,8.577,5.702,13.781c-0.004,10.741-8.746,19.48-19.486,19.48c-3.189-0.001-6.344-0.788-9.144-2.277l-9.875,2.589C4.953,43.798,4.911,43.803,4.868,43.803z"
+      ></path>
+      <path
+        fill="#cfd8dc"
+        d="M24.014,5c5.079,0.002,9.845,1.979,13.43,5.566c3.584,3.588,5.558,8.356,5.556,13.428c-0.004,10.465-8.522,18.98-18.986,18.98h-0.008c-3.177-0.001-6.3-0.798-9.073-2.311L4.868,43.303l2.694-9.835C5.9,30.59,5.026,27.324,5.027,23.979C5.032,13.514,13.548,5,24.014,5 M24.014,42.974C24.014,42.974,24.014,42.974,24.014,42.974C24.014,42.974,24.014,42.974,24.014,42.974 M24.014,42.974C24.014,42.974,24.014,42.974,24.014,42.974C24.014,42.974,24.014,42.974,24.014,42.974 M24.014,4C24.014,4,24.014,4,24.014,4C12.998,4,4.032,12.962,4.027,23.979c-0.001,3.367,0.849,6.685,2.461,9.622l-2.585,9.439c-0.094,0.345,0.002,0.713,0.254,0.967c0.19,0.192,0.447,0.297,0.711,0.297c0.085,0,0.17-0.011,0.254-0.033l9.687-2.54c2.828,1.468,5.998,2.243,9.197,2.244c11.024,0,19.99-8.963,19.995-19.98c0.002-5.339-2.075-10.359-5.848-14.135C34.378,6.083,29.357,4.002,24.014,4L24.014,4z"
+      ></path>
+      <path
+        fill="#40c351"
+        d="M35.176,12.832c-2.98-2.982-6.941-4.625-11.157-4.626c-8.704,0-15.783,7.076-15.787,15.774c-0.001,2.981,0.833,5.883,2.413,8.396l0.376,0.597l-1.595,5.821l5.973-1.566l0.577,0.342c2.422,1.438,5.2,2.198,8.032,2.199h0.006c8.698,0,15.777-7.077,15.78-15.776C39.795,19.778,38.156,15.814,35.176,12.832z"
+      ></path>
+      <path
+        fill="#fff"
+        fill-rule="evenodd"
+        d="M19.268,16.045c-0.355-0.79-0.729-0.806-1.068-0.82c-0.277-0.012-0.593-0.011-0.909-0.011c-0.316,0-0.83,0.119-1.265,0.594c-0.435,0.475-1.661,1.622-1.661,3.956c0,2.334,1.7,4.59,1.937,4.906c0.237,0.316,3.282,5.259,8.104,7.161c4.007,1.58,4.823,1.266,5.693,1.187c0.87-0.079,2.807-1.147,3.202-2.255c0.395-1.108,0.395-2.057,0.277-2.255c-0.119-0.198-0.435-0.316-0.909-0.554s-2.807-1.385-3.242-1.543c-0.435-0.158-0.751-0.237-1.068,0.238c-0.316,0.474-1.225,1.543-1.502,1.859c-0.277,0.317-0.554,0.357-1.028,0.119c-0.474-0.238-2.002-0.738-3.815-2.354c-1.41-1.257-2.362-2.81-2.639-3.285c-0.277-0.474-0.03-0.731,0.208-0.968c0.213-0.213,0.474-0.554,0.712-0.831c0.237-0.277,0.316-0.475,0.474-0.791c0.158-0.317,0.079-0.594-0.04-0.831C20.612,19.329,19.69,16.983,19.268,16.045z"
+        clip-rule="evenodd"
+      ></path>
+    </svg>
+  </a>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-content">
+      <!-- Logo ETIPI (versão branca, alinhada à esquerda) -->
+      <img
+        src="https://www.etipi.com.br/wp-content/uploads/2024/04/etipi-4.png"
+        alt="Logo ETIPI"
+        class="footer-logo"
+      />
+
+      <!-- Texto centralizado -->
+      <div class="footer-text">
+        Somos a <strong>inovação</strong> que faz a diferença.
+      </div>
+
+      <!-- Logo Governo do Piauí (versão branca, alinhada à direita) -->
+      <img
+        src="https://www.etipi.com.br/wp-content/uploads/2024/04/etipi-logo-1-2.png"
+        alt="Governo do Piauí"
+        class="footer-logo-gov"
+      />
+    </div>
+  </footer>
+</body>
+</html>
